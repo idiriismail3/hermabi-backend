@@ -1,0 +1,50 @@
+[
+  {
+    "id": "HMB-1783790365164-2twvf8apa",
+    "timestamp": "2026-07-11T17:19:25.164Z",
+    "customer": {
+      "fullname": "ismail idiri",
+      "email": "idiriismail3@gmail.com",
+      "phone": "0600653840",
+      "address": "El jadida, Avenue Bn bandiss",
+      "city": "EL jadida"
+    },
+    "items": [
+      {
+        "id": 8,
+        "name": "Maillot Bordeaux Foncé",
+        "qty": 1,
+        "price": 300
+      },
+      {
+        "id": 7,
+        "name": "Maillot Noir Print 00",
+        "qty": 1,
+        "price": 300
+      },
+      {
+        "id": 5,
+        "name": "Maillot Gris Bicolore",
+        "qty": 1,
+        "price": 300
+      },
+      {
+        "id": 4,
+        "name": "Maillot Gris Bicolore Print 00",
+        "qty": 1,
+        "price": 300
+      },
+      {
+        "id": 11,
+        "name": "Pantalon Cargo Noir",
+        "qty": 1,
+        "price": 300
+      }
+    ],
+    "subtotal": 1500,
+    "shipping": 0,
+    "total": 1500,
+    "paymentMethod": "card",
+    "status": "pending"
+  }
+]
