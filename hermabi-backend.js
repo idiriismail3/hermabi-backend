@@ -81,6 +81,10 @@ app.post('/api/checkout', (req, res) => {
     if (!customer || !items || !total) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
+    // Validate payment method
+    if (!['cod', 'card', 'whatsapp'].includes(paymentMethod)) {
+      return res.status(400).json({ error: 'Invalid payment method' });
+}
 
     // Create order record
     const orderId = 'HMB-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
@@ -110,6 +114,17 @@ app.post('/api/checkout', (req, res) => {
         redirectUrl: `/order-confirmed?id=${orderId}`,
       });
     }
+    // If WhatsApp payment
+    if (paymentMethod === 'whatsapp') {
+      order.status = 'pending_whatsapp';
+      saveOrder(order);
+      return res.json({
+        success: true,
+        message: 'WhatsApp redirect',
+        orderId: orderId,
+        redirectUrl: `/order-confirmed?id=${orderId}`,
+  });
+}
 
     // If card payment, prepare CMI redirect
     if (paymentMethod === 'card') {
