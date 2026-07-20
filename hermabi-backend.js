@@ -8,9 +8,7 @@ const cors = require('cors');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+
 require('dotenv').config();
 
 const app = express();
