@@ -5,6 +5,8 @@
 
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
@@ -280,37 +282,25 @@ app.use((err, req, res, next) => {
 // ============================================================================
 // START SERVER
 // ============================================================================
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-
-// Create uploads folder if it doesn't exist
-const uploadsDir = path.join(__dirname, 'public/uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Setup multer for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-
-const upload = multer({ storage });
 
 // Image upload endpoint
-app.post('/api/upload', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-  const imageUrl = `${process.env.BACKEND_URL}/uploads/${req.file.filename}`;
-  res.json({ success: true, imageUrl });
+app.post('/api/upload', (req, res) => {
+  let body = '';
+  req.on('data', chunk => body += chunk);
+  req.on('end', () => {
+    try {
+      const data = JSON.parse(body);
+      const base64 = data.image.split(',')[1];
+      const filename = 'img-' + Date.now() + '.jpg';
+      
+      // For now, just return a placeholder URL
+      const imageUrl = `${process.env.BACKEND_URL}/images/${filename}`;
+      res.json({ success: true, imageUrl });
+    } catch(e) {
+      res.status(400).json({ error: 'Upload failed' });
+    }
+  });
 });
-
 // Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.listen(PORT, () => {
