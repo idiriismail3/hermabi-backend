@@ -8,6 +8,9 @@ const cors = require('cors');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const app = express();
@@ -51,7 +54,8 @@ function loadOrders() {
 function saveOrder(order) {
   const orders = loadOrders();
   orders.push(order);
-  fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+  // Note: This saves to backend's memory. For persistent storage, use a database.
+  // For now, we'll rely on frontend localStorage
   return order;
 }
 
@@ -278,6 +282,39 @@ app.use((err, req, res, next) => {
 // ============================================================================
 // START SERVER
 // ============================================================================
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Create uploads folder if it doesn't exist
+const uploadsDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Setup multer for image uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage });
+
+// Image upload endpoint
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  const imageUrl = `${process.env.BACKEND_URL}/uploads/${req.file.filename}`;
+  res.json({ success: true, imageUrl });
+});
+
+// Serve uploaded images
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 app.listen(PORT, () => {
   console.log(`\n=================================`);
   console.log(`HERMABI Backend Server`);
